@@ -24,26 +24,32 @@ bool necessary_length(size_t &all, size_t &block){
     }
 }
 
-const char* pathin = "input.txt";
+const char* pathin = "/Users/howle/prog/Cpp/projects/Coder/Coder/Coder/input.txt";
 
 using namespace std;
 int main(int argc, const char * argv[]) {
     vector<char> str;
-    char temp;
-    ifstream file;
-    file.open(pathin, ios::binary | ios::in);
-    if ( !file ) {
-        file.seekg(0, ios::end);
-        size_t size_of_file = file.tellg();
-        size_t counter;
-        file.seekg(0);
-        bool state_counter = necessary_length(size_of_file, counter);
-        char * buf = new char[counter+1];
-        while (state_counter) {
-            file.read(buf, counter);
-            state_counter = necessary_length(size_of_file, counter);
-            cout << buf << endl;
-        }
+    ifstream file(pathin, ios::binary);
+    if ( file.is_open() ) {
+        cout << "Файл открыт" << endl;
+    } else {
+        cout << "Ошибка открытия" << endl;
+    }
+    file.seekg(0, ios::end);
+    size_t size_of_file = file.tellg();
+    size_t counter;
+    file.seekg(0);
+    char der[10];
+    file >> der;
+    cout << der << endl;
+    file.seekg(0);
+    bool state_counter = true;
+    necessary_length(size_of_file, counter);
+    char * buf = new char[counter+1];
+    while (state_counter) {
+        file.read(buf, counter);
+        cout << buf << endl;
+        state_counter = necessary_length(size_of_file, counter);
     }
     for ( int i = 0; i < str.size(); i++) cout << str[i];
     file.close();
