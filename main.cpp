@@ -39,40 +39,45 @@ void keyMenu(char* &key){
         cin >> key;
     }
 }
-int keyEngin(int num, int position, int keyLen){
-    return (keyLen*( div((abs(position-num)), keyLen).quot + 1))-num;
-}
-int keyEngin1(int num, int position, int keyLen){
+int keyEngin1(int num, int position, int keyLen){ //-
     return (position - div(num, keyLen).rem) > 0 ? keyLen-(position - div(num, keyLen).rem) : keyLen+(position - div(num, keyLen).rem) ;
 }
-int keyEngin2(int num, int position, int keyLen){
+int keyEngin2(int num, int position, int keyLen){ //+
     return (position + div(num, keyLen).rem) > 12 ? (position + div(num, keyLen).rem)-keyLen : (position + div(num, keyLen).rem) ;
 }
 void keyGen(char* &key){
     char* ComandKey;
-    int tmpKey;
+    int tmpKey = 0;
     int currentPosition = 0;
     keyMenu(key);
-    for (size_t i = 0; i < sizeof(key); i++) {
+    int size = sizeof(key);
+    for (size_t i = 0; i < size; i++) {
         for (int t = 0; t < 2; t++) {
             if (t == 0) {
                 tmpKey = int(*(key + i)) >> 4;
                 if ( tmpKey % 2 == 0){  //Если четный, то -, иначе +
-                        // -
-                        int num = tmpKey >> 1;
-                        if (currentPosition - num > 0) {
-                        currentPosition -= num;
-                    } else {
-                        
-                    }
+                    // -
+                    int num = tmpKey >> 1;
+                    currentPosition = keyEngin1(num, currentPosition, size);
+                } else {
+                // +
+                int num = tmpKey >> 1;
+                currentPosition = keyEngin1(num, currentPosition, size);
                 }
             } else {
-                
+                tmpKey = int(*(key + i)) & 15;
+                if ( tmpKey % 2 == 0){  //Если четный, то -, иначе +
+                    // -
+                    int num = tmpKey >> 1;
+                    currentPosition = keyEngin1(num, currentPosition, size);
+                } else {
+                    // +
+                    int num = tmpKey >> 1;
+                    currentPosition = keyEngin1(num, currentPosition, size);
+                }
             }
         }
     }
-    
-    
 }
 
 const char* pathin = "/Users/howle/prog/Cpp/projects/Coder/Coder/Coder/input.txt";
@@ -82,7 +87,7 @@ int main(int argc, const char * argv[]) {
     /*char key[key_len];
     keyGen(key);*/
     cout << keyEngin1(40, 2, 12) << endl;
-    cout << keyEngin2(-40, 2, 12) << endl;
+    cout << keyEngin2(40, 2, 12) << endl;
     ifstream file(pathin, ios::binary);
     if ( file.is_open() ) {
         cout << "Файл открыт" << endl;
