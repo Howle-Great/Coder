@@ -45,11 +45,10 @@ int keyEngin1(int &num, int &position, int &keyLen){ //-
 int keyEngin2(int &num, int &position, int &keyLen){ //+
     return (position + div(num, keyLen).rem) > 12 ? (position + div(num, keyLen).rem)-keyLen : (position + div(num, keyLen).rem) ;
 }
-char* keyGen(char* &key){
+char* keyGen(vector<char> &positions, char* &key){
     char* ComandKey;
     int tmpKey = 0;
     int currentPosition = 0;
-    vector<int> positions;
     keyMenu(key);
     int size = sizeof(key);
     for (size_t i = 0; i < size; i++) {
@@ -60,12 +59,12 @@ char* keyGen(char* &key){
                     // -
                     int num = tmpKey >> 1;
                     currentPosition = keyEngin1(num, currentPosition, size);
-                    positions.push_back(currentPosition);
+                    positions.push_back(*(key+currentPosition)-255);
                 } else {
                     // +
                     int num = tmpKey >> 1;
                     currentPosition = keyEngin2(num, currentPosition, size);
-                    positions.push_back(currentPosition);
+                    positions.push_back(*(key+currentPosition));
                 }
             } else {
                 tmpKey = int(*(key + i)) & 15;
@@ -73,12 +72,12 @@ char* keyGen(char* &key){
                     // -
                     int num = tmpKey >> 1;
                     currentPosition = keyEngin1(num, currentPosition, size);
-                    positions.push_back(currentPosition);
+                    positions.push_back(*(key+currentPosition)-255);
                 } else {
                     // +
                     int num = tmpKey >> 1;
                     currentPosition = keyEngin2(num, currentPosition, size);
-                    positions.push_back(currentPosition);
+                    positions.push_back(*(key+currentPosition));
                 }
             }
         }
@@ -89,11 +88,14 @@ char* keyGen(char* &key){
     }
     return code;
 }
-
+void Coder(){
+    
+}
 const char* pathin = "/Users/howle/prog/Cpp/projects/Coder/Coder/Coder/input.txt";
 
 int main(int argc, const char * argv[]) {
     vector<char> str;
+    vector<char> positions; // for key
     /*char key[key_len];
     keyGen(key);*/
     ifstream file(pathin, ios::binary);
