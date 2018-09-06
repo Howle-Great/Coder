@@ -17,9 +17,11 @@
 #define file_in_len 100
 #define key_len 31
 
+const char* pathin = "/Users/howle/prog/Cpp/projects/Coder/Coder/Coder/input.txt";
+
 using namespace std;
 
-bool necessary_length(size_t &all, size_t &block){
+bool necessary_length(size_t &all, size_t &block){  // Unused!!!
     if (all >= file_in_len) {
         all-=file_in_len;
         block = file_in_len;
@@ -45,8 +47,8 @@ int keyEngin1(int &num, int &position, int &keyLen){ //-
 int keyEngin2(int &num, int &position, int &keyLen){ //+
     return (position + div(num, keyLen).rem) > 12 ? (position + div(num, keyLen).rem)-keyLen : (position + div(num, keyLen).rem) ;
 }
-char* keyGen(vector<char> &positions, char* &key){
-    char* ComandKey;
+void keyGen(vector<char> &code){
+    char* key;
     int tmpKey = 0;
     int currentPosition = 0;
     keyMenu(key);
@@ -59,12 +61,12 @@ char* keyGen(vector<char> &positions, char* &key){
                     // -
                     int num = tmpKey >> 1;
                     currentPosition = keyEngin1(num, currentPosition, size);
-                    positions.push_back(*(key+currentPosition)-255);
+                    code.push_back(*(key+currentPosition)-255);
                 } else {
                     // +
                     int num = tmpKey >> 1;
                     currentPosition = keyEngin2(num, currentPosition, size);
-                    positions.push_back(*(key+currentPosition));
+                    code.push_back(*(key+currentPosition));
                 }
             } else {
                 tmpKey = int(*(key + i)) & 15;
@@ -72,57 +74,44 @@ char* keyGen(vector<char> &positions, char* &key){
                     // -
                     int num = tmpKey >> 1;
                     currentPosition = keyEngin1(num, currentPosition, size);
-                    positions.push_back(*(key+currentPosition)-255);
+                    code.push_back(*(key+currentPosition)-255);
                 } else {
                     // +
                     int num = tmpKey >> 1;
                     currentPosition = keyEngin2(num, currentPosition, size);
-                    positions.push_back(*(key+currentPosition));
+                    code.push_back(*(key+currentPosition));
                 }
             }
         }
     }
-    char* code = new char(positions.size());
-    for (int i = 0; i <= positions.size(); i++) {
-        code[i] = positions[i];
-    }
-    return code;
 }
-void Coder(){
+void Encryption(char* &dateFile){
+    vector<char> code; // for key
+    keyGen(code);
+    for (int i = 0; i < sizeof(dateFile); i++) {
+        *(dateFile + i) += code[i];
+    }
     
 }
-const char* pathin = "/Users/howle/prog/Cpp/projects/Coder/Coder/Coder/input.txt";
-
-int main(int argc, const char * argv[]) {
-    vector<char> str;
-    vector<char> positions; // for key
-    /*char key[key_len];
-    keyGen(key);*/
+void InitFile(){
     ifstream file(pathin, ios::binary);
     if ( file.is_open() ) {
         cout << "Файл открыт" << endl;
     } else {
         cout << "Ошибка открытия" << endl;
     }
-    file.seekg(0, ios::end);
-    size_t size_of_file = file.tellg();
-    size_t counter;
-    size_t next_counter;
+    size_t size_of_file = file.seekg(0, ios::end).tellg();
     file.seekg(0);
-    bool state_counter = true;
-    necessary_length(size_of_file, counter);
-    next_counter = counter;
-    char * buf = new char[counter+1];
-    while (state_counter) {
-        file.read(buf, counter);
-        cout << buf << endl;
-        state_counter = necessary_length(size_of_file, counter);
-    }
-    //for ( int i = 0; i < str.size(); i++) cout << str[i];
-    cout << endl;
-    for ( size_t i = 0; i < next_counter; i++){
-        cout << *(buf+i) << endl;
-    }
+    char * buf = new char[size_of_file+1];
+    file.read(buf, size_of_file);
+    cout << buf << endl;
+    
+    Encryption(buf);
+    
     file.close();
+}
+
+int main(int argc, const char * argv[]) {
+    
     return 0;
 }
