@@ -32,14 +32,19 @@ bool necessary_length(size_t &all, size_t &block){  // Unused!!!
         return false;
     }
 }
-void keyMenu(char* &key){
+char* keyMenu(){
+    char* key = new char[30];
     cout << "Введите ключ (от 10 до 30 символов):" << endl;
     cin >> key;
-    while (sizeof(key) < 10 || sizeof(key) > 30){
+    cout << endl << strlen(key) << endl;
+    
+    while (strlen(key) < 10 || strlen(key) > 30){
         cout << "Ошибка генерации ключа!!!" << endl;
         cout << "Введите ключ (от 10 до 30 символов):" << endl;
+        cout << key << endl;
         cin >> key;
     }
+    return key;
 }
 int keyEngin1(int &num, int &position, int &keyLen){ //-
     return (position - div(num, keyLen).rem) > 0 ? keyLen-(position - div(num, keyLen).rem) : keyLen+(position - div(num, keyLen).rem) ;
@@ -51,8 +56,8 @@ void keyGen(vector<char> &code){
     char* key;
     int tmpKey = 0;
     int currentPosition = 0;
-    keyMenu(key);
-    int size = sizeof(key);
+    key = keyMenu();
+    int size = strlen(key);
     for (size_t i = 0; i < size; i++) {
         for (int t = 0; t < 2; t++) {
             if (t == 0) {
@@ -88,12 +93,20 @@ void keyGen(vector<char> &code){
 void Encryption(char* &dateFile){
     vector<char> code; // for key
     keyGen(code);
-    for (int i = 0; i < sizeof(dateFile); i++) {
+    for (int i = 0; i < strlen(dateFile); i++) {
         *(dateFile + i) += code[i];
     }
-    
 }
-void InitFile(){
+void Dencryption(char* &dateFile){
+    vector<char> code; // for key
+    keyGen(code);
+    for (int i = 0; i < strlen(dateFile); i++) {
+        *(dateFile + i) -= code[i];
+    }
+}
+
+int main(int argc, const char * argv[]) {
+    char * buf;
     ifstream file(pathin, ios::binary);
     if ( file.is_open() ) {
         cout << "Файл открыт" << endl;
@@ -102,16 +115,14 @@ void InitFile(){
     }
     size_t size_of_file = file.seekg(0, ios::end).tellg();
     file.seekg(0);
-    char * buf = new char[size_of_file+1];
+    buf = new char[size_of_file+1];
     file.read(buf, size_of_file);
     cout << buf << endl;
-    
-    Encryption(buf);
-    
     file.close();
-}
-
-int main(int argc, const char * argv[]) {
-    
+    cout << buf << endl;
+    Encryption(buf);
+    cout << buf << endl;
+    Dencryption(buf);
+    cout << buf << endl;
     return 0;
 }
