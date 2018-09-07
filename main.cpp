@@ -114,12 +114,12 @@ void Dencryption(char* &dateFile, vector<char> &code){
 int main(int argc, const char * argv[]) {
     vector<char> key;
     char * buf;
-    ifstream file(pathin, ios::binary);
+    /*ifstream file(pathin, ios::binary);
     if ( file.is_open() ) {
         cout << "Файл открыт" << endl;
     } else {
         cout << "Ошибка открытия" << endl;
-    }
+    }*/
     size_t size_of_file = file.seekg(0, ios::end).tellg();
     file.seekg(0);
     buf = new char[size_of_file+1];
