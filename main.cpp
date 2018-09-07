@@ -90,22 +90,29 @@ void keyGen(vector<char> &code){
         }
     }
 }
-void Encryption(char* &dateFile){
-    vector<char> code; // for key
-    keyGen(code);
+void Encryption(char* &dateFile, vector<char> &code){
+    int position = 0;
     for (int i = 0; i < strlen(dateFile); i++) {
-        *(dateFile + i) += code[i];
+        *(dateFile + i) += code[position];
+        position++;
+        if (position > code.size()) {
+            position = 0;
+        }
     }
 }
-void Dencryption(char* &dateFile){
-    vector<char> code; // for key
-    keyGen(code);
+void Dencryption(char* &dateFile, vector<char> &code){
+    int position = 0;
     for (int i = 0; i < strlen(dateFile); i++) {
-        *(dateFile + i) -= code[i];
+        *(dateFile + i) -= code[position];
+        position++;
+        if (position > code.size()) {
+            position = 0;
+        }
     }
 }
 
 int main(int argc, const char * argv[]) {
+    vector<char> key;
     char * buf;
     ifstream file(pathin, ios::binary);
     if ( file.is_open() ) {
@@ -116,13 +123,14 @@ int main(int argc, const char * argv[]) {
     size_t size_of_file = file.seekg(0, ios::end).tellg();
     file.seekg(0);
     buf = new char[size_of_file+1];
+    keyGen(key);
     file.read(buf, size_of_file);
     cout << buf << endl;
     file.close();
     cout << buf << endl;
-    Encryption(buf);
+    Encryption(buf, key);
     cout << buf << endl;
-    Dencryption(buf);
+    Dencryption(buf, key);
     cout << buf << endl;
     return 0;
 }
